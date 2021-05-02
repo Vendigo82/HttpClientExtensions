@@ -4,12 +4,12 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Vendigo.HttpClientBuilder.CorrelationIdHandler
+namespace VNogin.HttpClientHandlers.Handlers
 {
     public class CorrelationTraceIdHandler : DelegatingHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private string _correlationHeaderName;
+        private readonly string _correlationHeaderName;
 
         public CorrelationTraceIdHandler(string correlationHeaderName, IHttpContextAccessor httpContextAccessor)
         {

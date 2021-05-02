@@ -9,10 +9,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Vendigo.HttpClientBuilder.CorrelationIdHandler;
+using VNogin.HttpClientHandlers.Handlers;
 using Xunit;
 
-namespace Vendigo.HttpClientBuilder.Extensions.CorrelationIdHandler.Tests
+namespace VNogin.HttpClientHandlers.CorrelationIdHandler.Tests
 {
     public class CorrelationTraceIdHandlerTests : HttpClientHandlerBaseTests
     {

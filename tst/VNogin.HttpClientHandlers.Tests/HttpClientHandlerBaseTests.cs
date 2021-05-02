@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Vendigo.HttpClientBuilder.Extensions
+namespace VNogin.HttpClientHandlers
 {
     public class HttpClientHandlerBaseTests
     {

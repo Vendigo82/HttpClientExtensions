@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VNogin.HttpClientHandlers", "src\VNogin.HttpClientHandlers\VNogin.HttpClientHandlers.csproj", "{223C78AA-3280-4626-8A52-E6C2481F0187}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VNogin.HttpClientHandlers.Tests", "tst\VNogin.HttpClientHandlers.Tests\VNogin.HttpClientHandlers.Tests.csproj", "{4CC6506A-57E7-4B56-96F0-2A7D7D4F95DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{223C78AA-3280-4626-8A52-E6C2481F0187}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{223C78AA-3280-4626-8A52-E6C2481F0187}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{223C78AA-3280-4626-8A52-E6C2481F0187}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{223C78AA-3280-4626-8A52-E6C2481F0187}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CC6506A-57E7-4B56-96F0-2A7D7D4F95DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CC6506A-57E7-4B56-96F0-2A7D7D4F95DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CC6506A-57E7-4B56-96F0-2A7D7D4F95DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CC6506A-57E7-4B56-96F0-2A7D7D4F95DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E6233EC5-AAF3-4438-8B52-D33616701DC0}
+	EndGlobalSection
+EndGlobal

@@ -2,7 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Vendigo.HttpClientBuilder</RootNamespace>
+    <RootNamespace>VNogin.HttpClientHandlers</RootNamespace>
+    <Nullable>enable</Nullable>
+    <AssemblyName>VNogin.HttpClientHandlers</AssemblyName>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\Projects\HttpClientExtensions\src\VNogin.HttpClientHandlers\VNogin.HttpClientHandlers.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

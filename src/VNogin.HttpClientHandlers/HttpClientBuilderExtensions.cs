@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vendigo.HttpClientBuilder.CorrelationIdHandler;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using VNogin.HttpClientHandlers.Handlers;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -30,6 +27,28 @@ namespace Microsoft.Extensions.DependencyInjection
             this IHttpClientBuilder builder, 
             string correlationHeader = CorrelationHeader) => builder
             .AddHttpMessageHandler((sp) => ActivatorUtilities.CreateInstance<CorrelationTraceIdHandler>(sp, correlationHeader));
+
+        /// <summary>
+        /// Add logging handler to HttpClient
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="adjustSettings"></param>
+        /// <returns></returns>
+        public static IHttpClientBuilder AddLoggingHandler(
+            this IHttpClientBuilder builder,
+            Action<LoggingHttpHandler.Settings>? adjustSettings = null)
+        {
+            var name = builder.Name;
+            var settings = new LoggingHttpHandler.Settings();
+            adjustSettings?.Invoke(settings);
+
+            if (settings.LogBody == null)
+                throw new ArgumentException($"{nameof(settings.LogBody)} can't be null");
+            if (settings.LogLevel == null)
+                throw new ArgumentException($"{nameof(settings.LogLevel)} can't be null");
+
+            return builder.AddHttpMessageHandler(sp => new LoggingHttpHandler(sp.GetRequiredService<ILoggerFactory>(), name, settings));
+        }
         
     }
 }
