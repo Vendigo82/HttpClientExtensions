@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
@@ -47,27 +48,45 @@ namespace VNogin.HttpClientHandlers.Handlers
                 var elapsedMs = GetElapsedMilliseconds(start, Stopwatch.GetTimestamp());
 
                 if (logBody)
-                    responseBody = request.Content != null ? (await response.Content.ReadAsStringAsync(cancellationToken)) : string.Empty;
+                    responseBody = response.Content != null ? (await response.Content.ReadAsStringAsync(cancellationToken)) : string.Empty;
 
                 var logLevel = _settings.LogLevel(request, response.StatusCode, null);
-                    if (logBody)
-                        _logger.Log(logLevel, Pattern.PatternBody, request.Method.Method, request.RequestUri, response.StatusCode, elapsedMs,
-                            request, requestBody, response, responseBody);
-                    else
-                        _logger.Log(logLevel, Pattern.PatternBody, request.Method.Method, request.RequestUri, response.StatusCode, elapsedMs);
+                if (_logger.IsEnabled(logLevel)) {
+                    var dict = new Dictionary<string, object>();
+                    if (logBody) {
+                        dict.Add(Pattern.RequestMessage, request);
+                        dict.Add(Pattern.RequestBody, requestBody);
+                        dict.Add(Pattern.ResponseMessage, response);
+                        dict.Add(Pattern.ResponseBody, responseBody);
+                    }
+
+                    using var _ = _logger.BeginScope(dict);
+                    _logger.Log(logLevel, Pattern.PatternDefault, request.Method.Method, request.RequestUri, response.StatusCode, elapsedMs);
+                }
 
                 return response;
-            } catch (Exception e) {
-                var logLevel = _settings.LogLevel(request, null, e);
-                if (logBody)
-                    _logger.Log(logLevel, e, Pattern.PatternExceptionBody, request.Method.Method, request.RequestUri, request, requestBody);
-                else
-                    _logger.Log(logLevel, e, Pattern.PatternException, request.Method.Method, request.RequestUri);
-
+            } catch (Exception e) when (LogError(e)) {
                 throw;
             }
 
             static double GetElapsedMilliseconds(long start, long stop) => (stop - start) * 1000 / (double)Stopwatch.Frequency;
+
+            bool LogError(Exception e)
+            {
+                var logLevel = _settings.LogLevel(request, null, e);
+                if (_logger.IsEnabled(logLevel)) {
+                    var dict = new Dictionary<string, object>();
+                    if (logBody) {
+                        dict.Add(Pattern.RequestMessage, request);
+                        dict.Add(Pattern.RequestBody, requestBody);
+                    }
+
+                    using var _ = _logger.BeginScope(dict);
+                    _logger.Log(logLevel, e, Pattern.PatternException, request.Method.Method, request.RequestUri);
+                }
+
+                return true;
+            }
         }
 
         public class Settings
@@ -125,7 +144,7 @@ namespace VNogin.HttpClientHandlers.Handlers
                 + "Response message: {ResponseMessage}" + Environment.NewLine
                 + "Response body: {ResponseBody}";
 
-            public const string PatternException = "{" + Method + "} {" + Uri + " failed";
+            public const string PatternException = "{" + Method + "} {" + Uri + "} failed";
 
             public static readonly string PatternExceptionBody = PatternException + RequestPart;
         }
