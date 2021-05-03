@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <AssemblyName>VNogin.HttpClientHandlers</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.2.4</AssemblyVersion>
-    <FileVersion>1.0.2.4</FileVersion>
-    <Version>1.0.2.4</Version>
+    <AssemblyVersion>1.0.2.6</AssemblyVersion>
+    <FileVersion>1.0.2.6</FileVersion>
+    <Version>1.0.2.6</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
