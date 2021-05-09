@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VNogin.HttpClientHandlers</name>
+    </assembly>
+    <members>
+        <member name="F:VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler._logger">
+            <summary>
+            logger instance
+            </summary>
+        </member>
+        <member name="F:VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler._settings">
+            <summary>
+            Logging settings
+            </summary>
+        </member>
+        <member name="M:VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler.#ctor(Microsoft.Extensions.Logging.ILoggerFactory,System.String,VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler.Settings)">
+            <summary>
+            Construct logging deleteging handler
+            </summary>
+            <param name="logFactory"></param>
+            <param name="name"></param>
+        </member>
+        <member name="P:VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler.Settings.LogLevel">
+            <summary>
+            Get log level function
+            </summary>
+        </member>
+        <member name="P:VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler.Settings.LogBody">
+            <summary>
+            If true, then request and response body will be logged. By default log body on level <see cref="F:Microsoft.Extensions.Logging.LogLevel.Debug"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddConfigurationPolicies(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)">
+            <summary>
+            Add retry and circut braaker policy to http client
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddLoggingHandler(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder,System.Action{VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler.Settings})">
+            <summary>
+            Add logging handler to HttpClient
+            </summary>
+            <param name="builder"></param>
+            <param name="adjustSettings"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Register Http polly policies from configuration from section with name 'HttpClientPolicies' 
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.String)">
+            <summary>
+            Register Http polly policies from configuration
+            </summary>
+            <see cref="!:https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/"/>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <param name="configurationSectionName"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

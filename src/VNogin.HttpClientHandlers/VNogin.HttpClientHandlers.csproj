@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <AssemblyName>VNogin.HttpClientHandlers</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.2.6</AssemblyVersion>
-    <FileVersion>1.0.2.6</FileVersion>
-    <Version>1.0.2.6</Version>
+    <AssemblyVersion>1.0.2.7</AssemblyVersion>
+    <FileVersion>1.0.2.7</FileVersion>
+    <Version>1.0.2.7</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -22,6 +22,12 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="VNogin.HttpClientHandlers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

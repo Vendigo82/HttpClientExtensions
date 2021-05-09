@@ -7,7 +7,18 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class PollyPolicesExtensions
     {
-        public const string PoliciesConfigurationSectionName = "HttpPolicies";
+        public const string PoliciesConfigurationSectionName = "HttpClientPolicies";
+
+        /// <summary>
+        /// Register Http polly policies from configuration from section with name 'HttpClientPolicies' 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddConfigurationHttpClientPolicies(
+            this IServiceCollection services,
+            IConfiguration configuration)
+            => AddConfigurationHttpClientPolicies(services, configuration, PoliciesConfigurationSectionName);
 
         /// <summary>
         /// Register Http polly policies from configuration
@@ -19,10 +30,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddConfigurationHttpClientPolicies(
             this IServiceCollection services,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            string configurationSectionName)
         {
-            //var section = configuration.GetSection(configurationSectionName);
-            //services.Configure<PolicyOptions>(configuration);
+            var section = configuration.GetSection(configurationSectionName);
+            services.Configure<PolicyOptions>(configuration);
             var policyOptions = configuration.Get<PolicyOptions>() ?? new PolicyOptions();
 
             var policyRegistry = services.AddPolicyRegistry();
