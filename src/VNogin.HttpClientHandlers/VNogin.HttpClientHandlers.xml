@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VNogin.HttpClientHandlers</name>
+    </assembly>
+    <members>
+        <member name="F:VNogin.HttpClientHandlers.LoggingHttpHandler._logger">
+            <summary>
+            logger instance
+            </summary>
+        </member>
+        <member name="F:VNogin.HttpClientHandlers.LoggingHttpHandler._settings">
+            <summary>
+            Logging settings
+            </summary>
+        </member>
+        <member name="M:VNogin.HttpClientHandlers.LoggingHttpHandler.#ctor(Microsoft.Extensions.Logging.ILoggerFactory,System.String,VNogin.HttpClientHandlers.LoggingHttpHandler.Settings)">
+            <summary>
+            Construct logging deleteging handler
+            </summary>
+            <param name="logFactory"></param>
+            <param name="name"></param>
+            <param name="settings">log settings</param>
+        </member>
+        <member name="P:VNogin.HttpClientHandlers.LoggingHttpHandler.Settings.LogLevelException">
+            <summary>
+            Get log level function. Default info if success and warning if exception was throws or status code is not 2XX or 3XX.
+            </summary>
+        </member>
+        <member name="P:VNogin.HttpClientHandlers.LoggingHttpHandler.Settings.LogBody">
+            <summary>
+            If true, then request and response body will be logged. By default log body on level <see cref="F:Microsoft.Extensions.Logging.LogLevel.Debug"/>
+            </summary>
+        </member>
+        <member name="M:VNogin.HttpClientHandlers.LoggingHttpHandler.LogLevelDefault(System.Net.Http.HttpRequestMessage,System.Net.HttpStatusCode,System.Double)">
+            <summary>
+            Log level information for success status codes in [200, 300). For other status codes log level is Warning
+            </summary>
+            <param name="request"></param>
+            <param name="statusCode"></param>
+            <param name="elapsed"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VNogin.HttpClientHandlers.LoggingHttpHandler.LogLevelExceptionDefault(System.Net.Http.HttpRequestMessage,System.Exception)">
+            <summary>
+            LogLevel warning for request exceptions
+            </summary>
+            <param name="request"></param>
+            <param name="e"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddConfigurationPolicies(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)">
+            <summary>
+            Add retry and circut braaker policy to http client
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddLoggingHandler(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder,System.Action{VNogin.HttpClientHandlers.LoggingHttpHandler.Settings})">
+            <summary>
+            Add logging handler to HttpClient
+            </summary>
+            <param name="builder"></param>
+            <param name="adjustSettings"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddDefaultConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.String)">
+            <summary>
+            Load Http polly policies from configuration
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <param name="configurationSectionName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfigurationSection)">
+            <summary>
+            Register Http polly policies from configuration section
+            </summary>
+            <see cref="!:https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/"/>
+            <param name="services"></param>
+            <param name="section">Configuration section which contains poilicy options</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
