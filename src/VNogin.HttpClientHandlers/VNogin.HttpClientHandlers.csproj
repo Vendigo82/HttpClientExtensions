@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.1.0.8</AssemblyVersion>
     <FileVersion>1.1.0.8</FileVersion>
-    <Version>1.1.0.8</Version>
+    <Version>1.1.0</Version>
     <Authors>Nogin Vladimir</Authors>
     <Copyright>MIT</Copyright>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
