@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using VNogin.HttpClientHandlers.Handlers;
+using VNogin.HttpClientHandlers;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

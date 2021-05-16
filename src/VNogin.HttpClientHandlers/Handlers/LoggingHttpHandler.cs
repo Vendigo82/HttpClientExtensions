@@ -30,7 +30,7 @@ namespace VNogin.HttpClientHandlers
         /// <param name="settings">log settings</param>
         public LoggingHttpHandler(ILoggerFactory logFactory, string name, Settings settings)
         {
-            _logger = logFactory.CreateLogger($"VNogin.LoggingHttpHandler.{name}");
+            _logger = logFactory.CreateLogger($"VNogin.HttpClientHandlers.Logging.{name}");
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
