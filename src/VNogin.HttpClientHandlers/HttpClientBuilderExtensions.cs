@@ -33,6 +33,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentException($"{nameof(settings.LogBody)} can't be null");
             if (settings.LogLevel == null)
                 throw new ArgumentException($"{nameof(settings.LogLevel)} can't be null");
+            if (settings.LogLevelException == null)
+                throw new ArgumentException($"{nameof(settings.LogLevelException)} can't be null");
 
             return builder.AddHttpMessageHandler(sp => new LoggingHttpHandler(sp.GetRequiredService<ILoggerFactory>(), name, settings));
         }
