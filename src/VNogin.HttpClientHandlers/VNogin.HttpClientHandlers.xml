@@ -20,10 +20,11 @@
             </summary>
             <param name="logFactory"></param>
             <param name="name"></param>
+            <param name="settings">log settings</param>
         </member>
         <member name="P:VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler.Settings.LogLevel">
             <summary>
-            Get log level function
+            Get log level function. Default info if success and warning if exception was throws or status code is not 2XX or 3XX.
             </summary>
         </member>
         <member name="P:VNogin.HttpClientHandlers.Handlers.LoggingHttpHandler.Settings.LogBody">
@@ -46,22 +47,22 @@
             <param name="adjustSettings"></param>
             <returns></returns>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddDefaultConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.String)">
             <summary>
-            Register Http polly policies from configuration from section with name 'HttpClientPolicies' 
+            Load configuration
             </summary>
-            <param name="services"></param>
-            <param name="configuration"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.String)">
-            <summary>
-            Register Http polly policies from configuration
-            </summary>
-            <see cref="!:https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/"/>
             <param name="services"></param>
             <param name="configuration"></param>
             <param name="configurationSectionName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfigurationSection)">
+            <summary>
+            Register configurationSectionName
+            </summary>
+            <see cref="!:https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/"/>
+            <param name="services"></param>
+            <param name="section">Configuration section which contains poilicy options</param>
             <returns></returns>
         </member>
     </members>

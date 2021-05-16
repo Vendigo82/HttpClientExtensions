@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace VNogin.HttpClientHandlers.Handlers
+namespace VNogin.HttpClientHandlers
 {
     public class LoggingHttpHandler : DelegatingHandler
     {
@@ -27,9 +27,10 @@ namespace VNogin.HttpClientHandlers.Handlers
         /// </summary>
         /// <param name="logFactory"></param>
         /// <param name="name"></param>
+        /// <param name="settings">log settings</param>
         public LoggingHttpHandler(ILoggerFactory logFactory, string name, Settings settings)
         {
-            _logger = logFactory.CreateLogger($"VNogin.HttpClient.LoggingHandler.{name}");
+            _logger = logFactory.CreateLogger($"VNogin.LoggingHttpHandler.{name}");
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
@@ -92,7 +93,7 @@ namespace VNogin.HttpClientHandlers.Handlers
         public class Settings
         {
             /// <summary>
-            /// Get log level function
+            /// Get log level function. Default info if success and warning if exception was throws or status code is not 2XX or 3XX.
             /// </summary>
             public Func<HttpRequestMessage, HttpStatusCode?, Exception?, LogLevel> LogLevel { get; set; } = LogLevelDefault;
 

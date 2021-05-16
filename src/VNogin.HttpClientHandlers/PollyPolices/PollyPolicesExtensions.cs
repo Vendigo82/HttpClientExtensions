@@ -10,32 +10,30 @@ namespace Microsoft.Extensions.DependencyInjection
         public const string PoliciesConfigurationSectionName = "HttpClientPolicies";
 
         /// <summary>
-        /// Register Http polly policies from configuration from section with name 'HttpClientPolicies' 
+        /// Load Http polly policies from configuration
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddConfigurationHttpClientPolicies(
-            this IServiceCollection services,
-            IConfiguration configuration)
-            => AddConfigurationHttpClientPolicies(services, configuration, PoliciesConfigurationSectionName);
-
-        /// <summary>
-        /// Register Http polly policies from configuration
-        /// </summary>
-        /// <see cref="https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/"/>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <param name="configurationSectionName"></param>
         /// <returns></returns>
-        public static IServiceCollection AddConfigurationHttpClientPolicies(
+        public static IServiceCollection AddDefaultConfigurationHttpClientPolicies(
             this IServiceCollection services,
             IConfiguration configuration,
-            string configurationSectionName)
+            string configurationSectionName = PoliciesConfigurationSectionName)
+            => AddConfigurationHttpClientPolicies(services, configuration.GetSection(configurationSectionName));        
+
+        /// <summary>
+        /// Register Http polly policies from configuration section
+        /// </summary>
+        /// <see cref="https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/"/>
+        /// <param name="services"></param>
+        /// <param name="section">Configuration section which contains poilicy options</param>
+        /// <returns></returns>
+        public static IServiceCollection AddConfigurationHttpClientPolicies(
+            this IServiceCollection services,
+            IConfigurationSection section)
         {
-            var section = configuration.GetSection(configurationSectionName);
-            services.Configure<PolicyOptions>(configuration);
-            var policyOptions = configuration.Get<PolicyOptions>() ?? new PolicyOptions();
+            var policyOptions = section.Get<PolicyOptions>() ?? new PolicyOptions();
 
             var policyRegistry = services.AddPolicyRegistry();
 

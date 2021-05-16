@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VNogin.HttpClientHandlers",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VNogin.HttpClientHandlers.Tests", "tst\VNogin.HttpClientHandlers.Tests\VNogin.HttpClientHandlers.Tests.csproj", "{4CC6506A-57E7-4B56-96F0-2A7D7D4F95DA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{778B69F0-FC84-4EE8-AF80-CF2C23552D8C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
