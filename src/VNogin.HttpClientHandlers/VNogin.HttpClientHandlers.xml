@@ -22,7 +22,7 @@
             <param name="name"></param>
             <param name="settings">log settings</param>
         </member>
-        <member name="P:VNogin.HttpClientHandlers.LoggingHttpHandler.Settings.LogLevel">
+        <member name="P:VNogin.HttpClientHandlers.LoggingHttpHandler.Settings.LogLevelException">
             <summary>
             Get log level function. Default info if success and warning if exception was throws or status code is not 2XX or 3XX.
             </summary>
@@ -31,6 +31,23 @@
             <summary>
             If true, then request and response body will be logged. By default log body on level <see cref="F:Microsoft.Extensions.Logging.LogLevel.Debug"/>
             </summary>
+        </member>
+        <member name="M:VNogin.HttpClientHandlers.LoggingHttpHandler.LogLevelDefault(System.Net.Http.HttpRequestMessage,System.Net.HttpStatusCode,System.Double)">
+            <summary>
+            Log level information for success status codes in [200, 300). For other status codes log level is Warning
+            </summary>
+            <param name="request"></param>
+            <param name="statusCode"></param>
+            <param name="elapsed"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VNogin.HttpClientHandlers.LoggingHttpHandler.LogLevelExceptionDefault(System.Net.Http.HttpRequestMessage,System.Exception)">
+            <summary>
+            LogLevel warning for request exceptions
+            </summary>
+            <param name="request"></param>
+            <param name="e"></param>
+            <returns></returns>
         </member>
         <member name="M:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddConfigurationPolicies(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)">
             <summary>

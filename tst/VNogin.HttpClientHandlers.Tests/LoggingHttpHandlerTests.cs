@@ -26,7 +26,8 @@ namespace VNogin.HttpClientHandlers.Tests
         readonly HttpRequestMessage requestMessage;
 
         readonly Mock<Func<ILogger, HttpRequestMessage, bool>> logBodyMock = new();
-        readonly Mock<Func<HttpRequestMessage, HttpStatusCode?, Exception, LogLevel>> logLevelMock = new();
+        readonly Mock<Func<HttpRequestMessage, HttpStatusCode, double, LogLevel>> logLevelMock = new();
+        readonly Mock<Func<HttpRequestMessage, Exception, LogLevel>> logLevelExceptionMock = new();
 
         public LoggingHttpHandlerTests()
         {
@@ -35,7 +36,8 @@ namespace VNogin.HttpClientHandlers.Tests
 
             handler = new LoggingHttpHandler(logFactoryMock.Object, httpClientName, new LoggingHttpHandler.Settings() {
                 LogBody = logBodyMock.Object,
-                LogLevel = logLevelMock.Object
+                LogLevel = logLevelMock.Object,
+                LogLevelException = logLevelExceptionMock.Object
             });
 
             requestMessage = new HttpRequestMessage();
@@ -58,7 +60,7 @@ namespace VNogin.HttpClientHandlers.Tests
             // asserts
             response.Should().BeSameAs(expectedResponse);
 
-            logLevelMock.Verify(f => f(requestMessage, statusCode, null), Times.Once);
+            logLevelMock.Verify(f => f(requestMessage, statusCode, It.IsAny<double>()), Times.Once);
             handlerMock.Protected().Verify("SendAsync", Times.Once(), requestMessage, ItExpr.IsAny<CancellationToken>());
             logFactoryMock.Verify(f => f.CreateLogger(expectedLoggerName), Times.Once);
             loggerMock.Invocations.Where(i => i.Method.Name != "IsEnabled").Should().BeEmpty();
@@ -79,7 +81,7 @@ namespace VNogin.HttpClientHandlers.Tests
             // asserts
             response.Should().BeSameAs(expectedResponse);
 
-            logLevelMock.Verify(f => f(requestMessage, statusCode, null), Times.Once);
+            logLevelMock.Verify(f => f(requestMessage, statusCode, It.IsAny<double>()), Times.Once);
             handlerMock.Protected().Verify("SendAsync", Times.Once(), requestMessage, ItExpr.IsAny<CancellationToken>());
             logFactoryMock.Verify(f => f.CreateLogger(expectedLoggerName), Times.Once);
             loggerMock.Invocations.Where(i => i.Method.Name == "Log").Should()
@@ -91,7 +93,7 @@ namespace VNogin.HttpClientHandlers.Tests
         public async Task LogExceptionTest(HttpRequestException exception, LogLevel logLevel, HttpStatusCode statusCode)
         {
             // setup
-            logLevelMock.SetReturnsDefault<LogLevel>(logLevel);
+            logLevelExceptionMock.SetReturnsDefault<LogLevel>(logLevel);
             loggerMock.Setup(f => f.IsEnabled(logLevel)).Returns(true);
             var expectedResponse = new HttpResponseMessage(statusCode);
 
@@ -105,7 +107,7 @@ namespace VNogin.HttpClientHandlers.Tests
             // asserts
             (await action.Should().ThrowExactlyAsync<HttpRequestException>()).Which.Should().BeSameAs(exception);
 
-            logLevelMock.Verify(f => f(requestMessage, null, exception), Times.Once);
+            logLevelExceptionMock.Verify(f => f(requestMessage, exception), Times.Once);
             handlerMock.Protected().Verify("SendAsync", Times.Once(), requestMessage, ItExpr.IsAny<CancellationToken>());
             logFactoryMock.Verify(f => f.CreateLogger(expectedLoggerName), Times.Once);
             loggerMock.Invocations.Where(i => i.Method.Name == "Log").Should()
