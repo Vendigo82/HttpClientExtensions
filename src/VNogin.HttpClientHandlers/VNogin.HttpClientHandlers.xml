@@ -76,8 +76,8 @@
         <member name="M:Microsoft.Extensions.DependencyInjection.PollyPolicesExtensions.AddConfigurationHttpClientPolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfigurationSection)">
             <summary>
             Register Http polly policies from configuration section
+            https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/
             </summary>
-            <see cref="!:https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/"/>
             <param name="services"></param>
             <param name="section">Configuration section which contains poilicy options</param>
             <returns></returns>

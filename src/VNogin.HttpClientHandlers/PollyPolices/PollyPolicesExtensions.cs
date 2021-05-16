@@ -20,12 +20,12 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             IConfiguration configuration,
             string configurationSectionName = PoliciesConfigurationSectionName)
-            => AddConfigurationHttpClientPolicies(services, configuration.GetSection(configurationSectionName));        
+            => AddConfigurationHttpClientPolicies(services, configuration.GetSection(configurationSectionName));
 
         /// <summary>
         /// Register Http polly policies from configuration section
+        /// https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/
         /// </summary>
-        /// <see cref="https://rehansaeed.com/optimally-configuring-asp-net-core-httpclientfactory/"/>
         /// <param name="services"></param>
         /// <param name="section">Configuration section which contains poilicy options</param>
         /// <returns></returns>

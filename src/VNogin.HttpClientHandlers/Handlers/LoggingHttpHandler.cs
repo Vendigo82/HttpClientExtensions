@@ -41,7 +41,7 @@ namespace VNogin.HttpClientHandlers
             string requestBody = null!;
             string responseBody = null!;
             if (logBody)
-                requestBody = request.Content != null ? (await request.Content.ReadAsStringAsync(cancellationToken)) : string.Empty;
+                requestBody = request.Content != null ? (await request.Content.ReadAsStringAsync()) : string.Empty;
 
             var start = Stopwatch.GetTimestamp();
             try {
@@ -49,7 +49,7 @@ namespace VNogin.HttpClientHandlers
                 var elapsedMs = GetElapsedMilliseconds(start, Stopwatch.GetTimestamp());
 
                 if (logBody)
-                    responseBody = response.Content != null ? (await response.Content.ReadAsStringAsync(cancellationToken)) : string.Empty;
+                    responseBody = response.Content != null ? (await response.Content.ReadAsStringAsync()) : string.Empty;
 
                 var logLevel = _settings.LogLevel(request, response.StatusCode, elapsedMs);
                 if (_logger.IsEnabled(logLevel)) {
