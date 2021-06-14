@@ -133,31 +133,31 @@ namespace VNogin.HttpClientHandlers
 
         public class Pattern
         {
-            public const string Method = "HttpMethod";
+            public const string Method = "httpMethod";
 
-            public const string Uri = "HttpRequestUri";
+            public const string Uri = "httpRequestUri";
 
-            public const string StatusCode = "StatusCode";
+            public const string StatusCode = "statusCode";
 
-            public const string Elapsed = "Elapsed";
+            public const string Elapsed = "elapsed";
 
-            public const string RequestMessage = "RequestMessage";
+            public const string RequestMessage = "requestMessage";
 
-            public const string RequestBody = "RequestBody";
+            public const string RequestBody = "requestBody";
 
-            public const string ResponseMessage = "ResponseMessage";
+            public const string ResponseMessage = "responseMessage";
 
-            public const string ResponseBody = "ResponseBody";
+            public const string ResponseBody = "responseBody";
 
-            public const string PatternDefault = "{" + Method + "} {" + Uri + "} responded {" + StatusCode + "} in {" + Elapsed + "} ms";
+            public const string PatternDefault = "HTTP {" + Method + "} {" + Uri + "} responded {" + StatusCode + "} in {" + Elapsed + "} ms";
 
             public static readonly string RequestPart = Environment.NewLine
-                + "Request message: {RequestMessage}" + Environment.NewLine
-                + "Request body: {RequestBody}";
+                + "Request message: {" + RequestMessage +"}" + Environment.NewLine
+                + "Request body: {" + RequestBody + "}";
 
             public static readonly string PatternBody = PatternDefault + RequestPart + Environment.NewLine
-                + "Response message: {ResponseMessage}" + Environment.NewLine
-                + "Response body: {ResponseBody}";
+                + "Response message: {" + ResponseMessage + "}" + Environment.NewLine
+                + "Response body: {" + ResponseBody + "}";
 
             public const string PatternException = "{" + Method + "} {" + Uri + "} failed";
 
