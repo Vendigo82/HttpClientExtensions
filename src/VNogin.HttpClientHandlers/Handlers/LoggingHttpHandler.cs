@@ -2,166 +2,139 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace VNogin.HttpClientHandlers
+namespace VNogin.HttpClientHandlers;
+
+public record class LogReformatProvider
 {
-    public class LoggingHttpHandler : DelegatingHandler
+    public Func<HttpRequestMessage, Task<HttpRequestMessage>> RequestFunc { get; set; } = (HttpRequestMessage x) => Task.FromResult(x);
+    public Func<HttpResponseMessage, Task<HttpResponseMessage>> ResponseFunc { get; set; } = (HttpResponseMessage x) => Task.FromResult(x);
+}
+
+public record class LoggingHttpHandlerSettings
+{
+    public Func<HttpRequestMessage, double, LogLevel> LogLevelFunc { get; set; } = (_, _) => LogLevel.Information;
+    public Func<HttpRequestMessage, Exception, LogLevel> LogLevelExceptionFunc { get; set; } = (_, _) => LogLevel.Warning;
+    public LogReformatProvider LogReformatProvider { get; set; } = new();
+    public bool IsUseLogBody { get; set; } = true;
+}
+
+public class LoggingHttpHandler : DelegatingHandler
+{
+    private readonly ILogger _logger;
+    private readonly Func<HttpRequestMessage, double, LogLevel> _logLevelFunc;
+    private readonly Func<HttpRequestMessage, Exception, LogLevel> _logLevelExceptionFunc;
+    private readonly LogReformatProvider _logReformatProvider;
+    private readonly bool _isUseLogBody;
+
+    public LoggingHttpHandler(ILoggerFactory logFactory, string name, LoggingHttpHandlerSettings settings)
     {
-        /// <summary>
-        /// logger instance
-        /// </summary>
-        private readonly ILogger _logger;
+        _logger = logFactory.CreateLogger($"VNogin.HttpClientHandlers.Logging.{name}");
+        _logLevelFunc = settings.LogLevelFunc;
+        _logLevelExceptionFunc = settings.LogLevelExceptionFunc;
+        _logReformatProvider = settings.LogReformatProvider;
+        _isUseLogBody = settings.IsUseLogBody;
+    }
 
-        /// <summary>
-        /// Logging settings
-        /// </summary>
-        private readonly Settings _settings;
-
-
-        /// <summary>
-        /// Construct logging deleteging handler
-        /// </summary>
-        /// <param name="logFactory"></param>
-        /// <param name="name"></param>
-        /// <param name="settings">log settings</param>
-        public LoggingHttpHandler(ILoggerFactory logFactory, string name, Settings settings)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        var startAt = Stopwatch.GetTimestamp();
+        try
         {
-            _logger = logFactory.CreateLogger($"VNogin.HttpClientHandlers.Logging.{name}");
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            var response = await base.SendAsync(request, cancellationToken);
+            return await HandleResponseAsync(request, response, elapsed: GetElapsedInMilliseconds(startAt: startAt));
+        }
+        catch (Exception exception)
+        {
+            await HandleExceptionAsync(request, exception, elapsed: GetElapsedInMilliseconds(startAt: startAt));
+            throw;
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        double GetElapsedInMilliseconds(long startAt)
         {
-            bool logBody = _settings.LogBody(_logger, request);
+            var difference = (Stopwatch.GetTimestamp() - startAt) * 1000;
+            return difference / (double)Stopwatch.Frequency;
+        }
+    }
 
-            string requestBody = null!;
-            string responseBody = null!;
-            if (logBody)
-                requestBody = request.Content != null ? (await request.Content.ReadAsStringAsync()) : string.Empty;
+    private async Task<HttpResponseMessage> HandleResponseAsync(HttpRequestMessage request, HttpResponseMessage response, double elapsed)
+    {
+        var logLevel = _logLevelFunc(request, elapsed);
+        if (!_logger.IsEnabled(logLevel))
+        {
+            // do nothing, because log level is not enabled
+            return response;
+        }
 
-            var start = Stopwatch.GetTimestamp();
-            try {
-                var response = await base.SendAsync(request, cancellationToken);
-                var elapsedMs = GetElapsedMilliseconds(start, Stopwatch.GetTimestamp());
+        var loggerScope = null as IDisposable;
+        try
+        {
+            var requestMessage = await _logReformatProvider.RequestFunc(request);
+            var responseMessage = await _logReformatProvider.ResponseFunc(response);
 
-                if (logBody)
-                    responseBody = response.Content != null ? (await response.Content.ReadAsStringAsync()) : string.Empty;
-
-                var logLevel = _settings.LogLevel(request, response.StatusCode, elapsedMs);
-                if (_logger.IsEnabled(logLevel)) {
-                    var dict = new Dictionary<string, object>();
-                    if (logBody) {
-                        dict.Add(Pattern.RequestMessage, request);
-                        dict.Add(Pattern.RequestBody, requestBody);
-                        dict.Add(Pattern.ResponseMessage, response);
-                        dict.Add(Pattern.ResponseBody, responseBody);
-                    }
-
-                    using var _ = _logger.BeginScope(dict);
-                    _logger.Log(logLevel, Pattern.PatternDefault, request.Method.Method, request.RequestUri, response.StatusCode, elapsedMs);
-                }
-
-                return response;
-            } catch (Exception e) when (LogError(e)) {
-                throw;
-            }
-
-            static double GetElapsedMilliseconds(long start, long stop) => (stop - start) * 1000 / (double)Stopwatch.Frequency;
-
-            bool LogError(Exception e)
+            if (_isUseLogBody)
             {
-                var logLevel = _settings.LogLevelException(request, e);
-                if (_logger.IsEnabled(logLevel)) {
-                    var dict = new Dictionary<string, object>();
-                    if (logBody) {
-                        dict.Add(Pattern.RequestMessage, request);
-                        dict.Add(Pattern.RequestBody, requestBody);
+                loggerScope = _logger.BeginScope(
+                    new Dictionary<string, object?>
+                    {
+                        ["RequestMessage"] = requestMessage,
+                        ["RequestBody"] = await requestMessage.Content.ReadAsStringAsync(),
+                        ["ResponseMessage"] = responseMessage,
+                        ["ResponseBody"] = await responseMessage.Content.ReadAsStringAsync()
                     }
+                );
 
-                    using var _ = _logger.BeginScope(dict);
-                    _logger.Log(logLevel, e, Pattern.PatternException, request.Method.Method, request.RequestUri);
-                }
-
-                return true;
+                _logger.Log(logLevel, "HTTP {Method} {RequestUri} responded {StatusCode} in {Elapsed} ms",
+                    requestMessage.Method.Method,
+                    requestMessage.RequestUri,
+                    responseMessage.StatusCode,
+                    elapsed);
             }
         }
-
-        public class Settings
+        finally
         {
-            /// <summary>
-            /// Get log level function. Default info if success and warning if exception was throws or status code is not 2XX or 3XX.
-            /// </summary>
-            public Func<HttpRequestMessage, Exception, LogLevel> LogLevelException { get; set; } = LogLevelExceptionDefault;
-
-            public Func<HttpRequestMessage, HttpStatusCode, double, LogLevel> LogLevel { get; set; } = LogLevelDefault;
-
-            /// <summary>
-            /// If true, then request and response body will be logged. By default log body on level <see cref="LogLevel.Debug"/>
-            /// </summary>
-            public Func<ILogger, HttpRequestMessage, bool> LogBody { get; set; } = LogBodyDefault;            
-
+            loggerScope?.Dispose();
         }
 
-        public static bool LogBodyDefault(ILogger logger, HttpRequestMessage request) => logger.IsEnabled(LogLevel.Debug);
+        return response;
+    }
 
-        /// <summary>
-        /// Log level information for success status codes in [200, 300). For other status codes log level is Warning
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="statusCode"></param>
-        /// <param name="elapsed"></param>
-        /// <returns></returns>
-        public static LogLevel LogLevelDefault(HttpRequestMessage request, HttpStatusCode statusCode, double elapsed)
+    private async Task HandleExceptionAsync(HttpRequestMessage request, Exception exception, double elapsed)
+    {
+        var logLevel = _logLevelExceptionFunc(request, exception);
+        if (!_logger.IsEnabled(logLevel))
         {
-            if ((int)statusCode >= 200 && (int)statusCode < 300)
-                return LogLevel.Information;
-
-            return LogLevel.Warning;
+            // do nothing, because log level is not enabled
+            return;
         }
 
-        /// <summary>
-        /// LogLevel warning for request exceptions
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        public static LogLevel LogLevelExceptionDefault(HttpRequestMessage request, Exception e) => LogLevel.Warning;
-
-        public class Pattern
+        var loggerScope = null as IDisposable;
+        try
         {
-            public const string Method = "httpMethod";
+            var requestMessage = await _logReformatProvider.RequestFunc(request);
 
-            public const string Uri = "httpRequestUri";
+            if (_isUseLogBody)
+            {
+                loggerScope = _logger.BeginScope(
+                    new Dictionary<string, object?>
+                    {
+                        ["RequestMessage"] = requestMessage,
+                        ["RequestBody"] = await requestMessage.Content.ReadAsStringAsync()
+                    }
+                );
+            }
 
-            public const string StatusCode = "statusCode";
-
-            public const string Elapsed = "elapsed";
-
-            public const string RequestMessage = "requestMessage";
-
-            public const string RequestBody = "requestBody";
-
-            public const string ResponseMessage = "responseMessage";
-
-            public const string ResponseBody = "responseBody";
-
-            public const string PatternDefault = "HTTP {" + Method + "} {" + Uri + "} responded {" + StatusCode + "} in {" + Elapsed + "} ms";
-
-            public static readonly string RequestPart = Environment.NewLine
-                + "Request message: {" + RequestMessage +"}" + Environment.NewLine
-                + "Request body: {" + RequestBody + "}";
-
-            public static readonly string PatternBody = PatternDefault + RequestPart + Environment.NewLine
-                + "Response message: {" + ResponseMessage + "}" + Environment.NewLine
-                + "Response body: {" + ResponseBody + "}";
-
-            public const string PatternException = "{" + Method + "} {" + Uri + "} failed";
-
-            public static readonly string PatternExceptionBody = PatternException + RequestPart;
+            _logger.Log(logLevel, exception, "HTTP {Method} {RequestUri} failed in {Elapsed} ms",
+                requestMessage.Method.Method,
+                requestMessage.RequestUri,
+                elapsed);
+        }
+        finally
+        {
+            loggerScope?.Dispose();
         }
     }
 }

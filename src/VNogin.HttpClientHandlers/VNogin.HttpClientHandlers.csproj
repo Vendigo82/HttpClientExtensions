@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>VNogin.HttpClientHandlers</RootNamespace>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <AssemblyName>VNogin.HttpClientHandlers</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
